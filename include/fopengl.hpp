@@ -107,7 +107,7 @@ struct vertex_array{
         glGenVertexArrays(1, &vao);
         glBindVertexArray(vao);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), &(*data.begin()), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(container::value_type) * data.size(), &(*data.begin()), GL_STATIC_DRAW);
         
         std::array<unsigned int, sizeof...(Ts) + 1> offsets;
         std::fill(offsets.begin(), offsets.end(), 0);
