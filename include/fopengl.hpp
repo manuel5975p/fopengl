@@ -123,9 +123,19 @@ struct vertex_array{
         glBindVertexArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
+    template<typename container>
+    void update(const container& data){
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), &(*data.begin()), GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
     void draw(GLenum mode = GL_TRIANGLES)const{
         glBindVertexArray(vao);
         glDrawArrays(mode, 0, vcount);
+    }
+    ~vertex_array(){
+        glDeleteBuffers(1, &vbo);
+        glDeleteVertexArrays(1, &vao);
     }
 };
 #endif
