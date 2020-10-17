@@ -58,9 +58,9 @@ namespace fgl{
             glfwSetFramebufferSizeCallback(m_window, impl::framebrcb);
             this->key_callback = [](window*, int, int){};
             this->framebr_callback = [this](window*, int w, int h){
-                glViewport(0, 0, w, h);
                 this->width = w;
                 this->height = h;
+                glViewport(0, 0, w, h);
             };
             glDebugMessageCallback(MessageCallback, 0);
         }

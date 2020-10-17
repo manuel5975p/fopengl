@@ -237,7 +237,7 @@ void ShaderProgram::uniform44(const char* x, const float* mat){
 	int loc = glGetUniformLocation(getHandle(), x);
 	glProgramUniformMatrix4fv(getHandle(),loc, 1, GL_FALSE, mat); 
 }
-ShaderProgram const_shader(){
+ShaderProgram const_shader(float r, float g, float b, float a){
 	
 	std::string vert = 	R"(
 						#version 460 core
@@ -256,7 +256,7 @@ ShaderProgram const_shader(){
 	ShaderProgram prog;
 	prog.compile(nullptr, vert.c_str(), nullptr, frag.c_str());
 	prog.bind();
-	prog.uniform4f("fill", 1,0,0,1);
+	prog.uniform4f("fill", r,g,b, a);
 	prog.unbind();
 	return prog;
 }

@@ -30,7 +30,7 @@ public:
 	void uniform4f(const char* x, float v1, float v2, float v3, float v4);
 	void uniform44(const char* x, const float* mat);
 };
-ShaderProgram const_shader();
+ShaderProgram const_shader(float r, float g, float b, float a);
 ShaderProgram point_shader();
 ShaderProgram color_shader();
 #endif

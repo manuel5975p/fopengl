@@ -14,11 +14,8 @@ int main(){
                                 1,0,0,
                                 0.1,-0.1, 0,
                                 0,0,1};
-    win.framebr_callback = [](fgl::window* win, int w, int h){
-        
-    };
     vertex_array va(data, 3, 3);
-    ShaderProgram def = point_shader();
+    ShaderProgram def = const_shader(1,0,0,1);
     //glEnable(GL_PROGRAM_POINT_SIZE);
     while(win){
         win.poll_events();
