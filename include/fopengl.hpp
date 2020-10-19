@@ -134,8 +134,25 @@ struct vertex_array{
         glDrawArrays(mode, 0, vcount);
     }
     ~vertex_array(){
+        if(vbo)
         glDeleteBuffers(1, &vbo);
+        if(vao)
         glDeleteVertexArrays(1, &vao);
+    }
+    vertex_array& operator=(const vertex_array&) = delete;
+    vertex_array& operator=(vertex_array&& o){
+        vao = o.vao;
+        vbo = o.vbo;
+        vcount = o.vcount;
+        o.vao = 0;
+        o.vbo = 0;
+        o.vcount = 0;
+    }
+    vertex_array(const vertex_array& o) = delete;
+    vertex_array(vertex_array&& o) : vao(o.vao), vbo(o.vbo), vcount(o.vcount){
+        o.vao = 0;
+        o.vbo = 0;
+        o.vcount = 0;
     }
 };
 #endif
