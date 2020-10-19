@@ -148,6 +148,7 @@ struct vertex_array{
         o.vao = 0;
         o.vbo = 0;
         o.vcount = 0;
+        return *this;
     }
     vertex_array(const vertex_array& o) = delete;
     vertex_array(vertex_array&& o) : vao(o.vao), vbo(o.vbo), vcount(o.vcount){
