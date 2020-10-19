@@ -100,6 +100,7 @@ namespace fgl{
 struct vertex_array{
     GLuint vao, vbo;
     size_t vcount;
+    vertex_array() : vao(0), vbo(0), vcount(0){}
     template<typename container, typename... Ts>
     vertex_array(const container& data, Ts... ts){
         std::vector<unsigned int> sizes({static_cast<unsigned int>(ts)...});
