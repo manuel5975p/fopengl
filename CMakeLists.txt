@@ -20,7 +20,7 @@ if(NOT WIN32)
   set(BoldWhite   "${Esc}[1;37m")
 endif()
 project(fopengl)
-set(GLAD_API "gl=4.6" CACHE STRING "API type/version pairs, like \"gl=4.6,gles=\", no version means latest")
+set(GLAD_API "gl=2.0" CACHE STRING "API type/version pairs, like \"gl=2.0,gles=2.0\", no version means latest")
 set(GLAD_EXTENSIONS "GL_ARB_buffer_storage" CACHE STRING "Path to extensions file or comma separated list of extensions, if missing all extensions are included")
 FetchContent_Declare(
     glad
