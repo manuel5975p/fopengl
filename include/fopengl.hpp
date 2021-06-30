@@ -21,6 +21,7 @@ namespace fgl{
         static std::unordered_map<GLFWwindow*, window*> winwin_map;
         void keycb(GLFWwindow* window, int key, int scancode, int action, int mods);
         void framebrcb(GLFWwindow* window, int width, int height);
+        void mousebcb(GLFWwindow* window, int button, int action, int mods);
     }
     struct window{
         GLFWwindow* m_window;
@@ -28,12 +29,12 @@ namespace fgl{
         bool closed;
         window(unsigned int _width, unsigned int _height, const std::string& title) : closed(false){
             if(!glfwInit()){
-                std::cout << "glfw_init failed" << "\n";
+                std::cerr << "glfw_init failed" << "\n";
                 std::terminate();
             }
             glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
             glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
             m_window = glfwCreateWindow(_width, _height, title.c_str(), NULL, NULL);
             impl::winwin_map[m_window] = this;
@@ -45,12 +46,12 @@ namespace fgl{
             this->height = _height;
             glfwMakeContextCurrent(m_window);
             if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-                std::cout << "gladLoad failed" << "\n";
+                std::cerr << "gladLoad failed" << "\n";
 	        	std::terminate();
 	        }
 
 	        if (glfwExtensionSupported("GL_ARB_buffer_storage") == GLFW_FALSE) {
-                std::cout << "GL_ARB_buffer_storage failed" << "\n";
+                std::cerr << "GL_ARB_buffer_storage failed" << "\n";
 	        	std::terminate();
 	        }
             glfwSwapInterval(0);
@@ -64,6 +65,7 @@ namespace fgl{
                 glViewport(0, 0, w, h);
             };
             glDebugMessageCallback(MessageCallback, 0);
+            glfwSetMouseButtonCallback(m_window, impl::mousebcb);
         }
         operator bool()const{
             return !glfwWindowShouldClose(m_window);
@@ -85,7 +87,14 @@ namespace fgl{
         void set_key_callback(std::function<void(window*, int, int)> kcb){
             this->key_callback = kcb;
         }
+        void set_framebuffer_resize_callback(std::function<void(window*, int, int)> kcb){
+            this->framebr_callback = kcb;
+        }
+        void set_mousebutton_callback(std::function<void(window*, int, int, int)> kcb){
+            this->mousebutton_callback = kcb;
+        }
         std::function<void(window*, int, int)> key_callback;
+        std::function<void(window*, int, int, int)> mousebutton_callback;
         std::function<void(window*, int, int)> framebr_callback;
     };
     namespace impl{
@@ -94,6 +103,9 @@ namespace fgl{
         }
         void framebrcb(GLFWwindow* window, int width, int height){
             winwin_map[window]->framebr_callback(winwin_map[window], width, height);
+        }
+        void mousebcb(GLFWwindow* window, int button, int action, int mods){
+            winwin_map[window]->mousebutton_callback(winwin_map[window], button, action, mods);
         }
     }
 }

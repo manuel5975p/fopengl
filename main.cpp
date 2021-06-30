@@ -8,6 +8,9 @@ int main(){
             w->close();
         }
     });
+    win.set_mousebutton_callback([](fgl::window* win, int a, int b, int c){
+        std::cout << b << std::endl;
+    });
     std::vector<float> data = {-0.1, 0.1, 0,
                                 0, 1, 0,
                                 0.1,0.1, 0, 
