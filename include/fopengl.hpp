@@ -64,6 +64,7 @@ namespace fgl{
                 this->height = h;
                 glViewport(0, 0, w, h);
             };
+            this->mousebutton_callback = [this](window*, int a, int b, int c){};
             glDebugMessageCallback(MessageCallback, 0);
             glfwSetMouseButtonCallback(m_window, impl::mousebcb);
         }
