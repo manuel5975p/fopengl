@@ -170,4 +170,68 @@ struct vertex_array{
         o.vcount = 0;
     }
 };
+struct texture{
+    private:
+    GLuint tex_handle;
+    size_t m_width, m_height;
+    public:
+    size_t width()const{
+        return m_width;
+    }
+    size_t height()const{
+        return m_height;
+    }
+    GLuint handle()const{
+        return tex_handle;
+    }
+    texture(size_t w, size_t h) : m_width(w), m_height(h){
+        glGenTextures(1, &tex_handle);
+        glBindTexture(GL_TEXTURE_2D, tex_handle);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width(), height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    }
+    texture(size_t w, size_t h, const std::vector<unsigned char>& data) : m_width(w), m_height(h){
+        assert(data.size() == 4 * width() * height());
+        glGenTextures(1, &tex_handle);
+        glBindTexture(GL_TEXTURE_2D, tex_handle);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width(), height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    }
+    void update(const std::vector<unsigned char>& data){
+        assert(data.size() == 4 * width() * height());
+        bind();
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width(), height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
+    }
+    void update(const std::vector<unsigned char>& data, size_t w, size_t h){
+        m_width = w;
+        m_height = h;
+        assert(data.size() == 4 * width() * height());
+        bind();
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width(), height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
+    }
+    void bind(){
+        glBindTexture(GL_TEXTURE_2D, handle());
+    }
+    ~texture(){
+        if(tex_handle){
+            glDeleteTextures(1, &tex_handle);
+        }
+    }
+    texture& operator=(const texture&) = delete;
+    texture& operator=(texture&& o){
+        tex_handle = o.tex_handle;
+        o.tex_handle = 0;
+        return *this;
+    }
+    texture(const texture& o) = delete;
+    texture(texture&& o) : tex_handle(o.tex_handle){
+        o.tex_handle = 0;
+    }
+};
 #endif
