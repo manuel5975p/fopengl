@@ -184,6 +184,7 @@ struct texture{
     GLuint handle()const{
         return tex_handle;
     }
+    texture() : tex_handle(0), m_width(0), m_height(0){}
     texture(size_t w, size_t h) : m_width(w), m_height(h){
         glGenTextures(1, &tex_handle);
         glBindTexture(GL_TEXTURE_2D, tex_handle);
