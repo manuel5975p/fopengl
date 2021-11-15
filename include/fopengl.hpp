@@ -216,6 +216,47 @@ struct texture{
         bind();
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width(), height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
     }
+    template<typename image_type>
+    void update(const image_type& img){
+        //m_width = img.cols();
+        //m_height = img.rows();
+        std::vector<unsigned char> data(4 * img.rows() * img.cols());
+        for(size_t i = 0; i < img.rows();i++){
+            for(size_t j = 0; j < img.cols();j++){
+                size_t pos = i * img.cols() + j;
+                size_t offset = pos * 4;
+                if constexpr(std::is_floating_point_v<typename std::remove_cvref_t<decltype(img(i, j))>::Scalar>){
+                    if(img(i, j).rows() == 4){
+                        data[offset + 0] = uint8_t(std::min(255.0f,img(i, j)(0) * 256));
+                        data[offset + 1] = uint8_t(std::min(255.0f,img(i, j)(1) * 256));
+                        data[offset + 2] = uint8_t(std::min(255.0f,img(i, j)(2) * 256));
+                        data[offset + 3] = uint8_t(std::min(255.0f,img(i, j)(3) * 256));
+                    }
+                    if(img(i, j).rows() == 3){
+                        data[offset + 0] = uint8_t(std::min(255.0f,img(i, j)(0) * 256));
+                        data[offset + 1] = uint8_t(std::min(255.0f,img(i, j)(1) * 256));
+                        data[offset + 2] = uint8_t(std::min(255.0f,img(i, j)(2) * 256));
+                        data[offset + 3] = 255;
+                    }
+                }
+                else{
+                    if(img(i, j).rows() == 4){
+                        data[offset + 0] = uint8_t(img(i, j)(0));
+                        data[offset + 1] = uint8_t(img(i, j)(1));
+                        data[offset + 2] = uint8_t(img(i, j)(2));
+                        data[offset + 3] = uint8_t(img(i, j)(3));
+                    }
+                    if(img(i, j).rows() == 3){
+                        data[offset + 0] = uint8_t(img(i, j)(0));
+                        data[offset + 1] = uint8_t(img(i, j)(1));
+                        data[offset + 2] = uint8_t(img(i, j)(2));
+                        data[offset + 3] = uint8_t(255);
+                    }
+                }
+            }
+        }
+        update(data, img.cols(), img.rows());
+    }
     void bind(){
         glBindTexture(GL_TEXTURE_2D, handle());
     }

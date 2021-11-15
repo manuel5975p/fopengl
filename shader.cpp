@@ -199,7 +199,7 @@ bool ShaderProgram::compile(const char* _compute, const char* _vertex, const cha
 	return true;
 }
 
-GLuint ShaderProgram::getHandle() {
+unsigned int ShaderProgram::getHandle() {
 	return program;
 }
 
@@ -209,6 +209,27 @@ ShaderProgram::ShaderProgram() : ShaderProgram(""){}
 
 ShaderProgram::~ShaderProgram() {
 	glDeleteProgram(program);
+}
+ShaderProgram::ShaderProgram(ShaderProgram&& sp) : program(sp.program), vertex(sp.vertex), frag(sp.frag), geom(sp.geom), compute(sp.compute){
+	sp.program = 0;
+	sp.vertex = 0;
+	sp.frag = 0;
+	sp.geom = 0;
+	sp.compute = 0;
+}
+ShaderProgram& ShaderProgram::operator=(ShaderProgram&& sp){
+	program = sp.program;
+	vertex  = sp.vertex;
+	frag    = sp.frag;
+	geom    = sp.geom;
+	compute = sp.compute;
+
+	sp.program = 0;
+	sp.vertex = 0;
+	sp.frag = 0;
+	sp.geom = 0;
+	sp.compute = 0;
+	return *this;
 }
 
 void ShaderProgram::bind() {
@@ -236,6 +257,38 @@ void ShaderProgram::uniform4f(const char* x, float v1, float v2, float v3, float
 void ShaderProgram::uniform44(const char* x, const float* mat){
 	int loc = glGetUniformLocation(getHandle(), x);
 	glProgramUniformMatrix4fv(getHandle(),loc, 1, GL_FALSE, mat); 
+}
+ShaderProgram texture_shader(){
+	std::string tvertshader = 
+	R"(
+	#version 330 core
+	layout (location = 0) in vec2 aPos;
+	layout (location = 1) in vec2 aTexCoord;
+
+	out vec2 TexCoord;
+
+	void main()
+	{
+	    gl_Position = vec4(aPos, 0.0, 1.0);
+	    TexCoord = aTexCoord;
+	}
+	)";
+	std::string tfragshader = R"(
+	#version 330 core
+	out vec4 FragColor;
+
+	in vec2 TexCoord;
+
+	uniform sampler2D ourTexture;
+
+	void main()
+	{
+	    FragColor = vec4(texture(ourTexture, TexCoord).xyz, 1.0);
+	}
+	)";
+	ShaderProgram prog;
+	prog.compile(nullptr, tvertshader.c_str(), nullptr, tfragshader.c_str());
+	return prog;
 }
 ShaderProgram const_shader(float r, float g, float b, float a){
 	

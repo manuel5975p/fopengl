@@ -4,19 +4,23 @@
 #include <iostream>
 #include <fstream>
 class ShaderProgram {
-
+public:
 	enum class Status {
 		success, failed, missing
 	};
 
-	int program = -1, compute = -1, vertex = -1, geom = -1, frag = -1;
+	unsigned int program = 0, compute = 0, vertex = 0, geom = 0, frag = 0;
 	void print(std::string, Status, Status, Status, Status, Status, std::string);
 	
 
-public:
+
 	ShaderProgram(std::string);
 	ShaderProgram();
 	~ShaderProgram();
+	ShaderProgram(const ShaderProgram& sp) = delete;
+	ShaderProgram(ShaderProgram&& sp);
+	ShaderProgram& operator=(const ShaderProgram& sp) = delete;
+	ShaderProgram& operator=(ShaderProgram&& sp);
 	std::string id;
 	bool printDebug = true;
 	bool compileFromFile(const std::string&);
@@ -32,5 +36,6 @@ public:
 };
 ShaderProgram const_shader(float r, float g, float b, float a);
 ShaderProgram point_shader();
+ShaderProgram texture_shader();
 ShaderProgram color_shader();
 #endif

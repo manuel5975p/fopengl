@@ -47,7 +47,7 @@ if(NOT glfw_POPULATED)
 
     add_subdirectory(${glfw_SOURCE_DIR} ${glfw_BINARY_DIR})
 endif()
-
+set(CMAKE_CXX_STANDARD 20)
 #target_link_libraries(fopentest glad)
 #target_link_libraries(fopentest glfw)
 add_library(fopengl "shader.cpp")
